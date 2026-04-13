@@ -1,0 +1,349 @@
+// ============ Constants ============
+const CURRENT_YEAR = 2026;
+const DAYS_OF_WEEK = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = [
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
+];
+
+const EVENT_COLORS = {
+    holiday:  '#0d6efd',
+    personal: '#e83e8c',
+    work:     '#0dcaf0',
+    special:  '#fd7e14',
+    fun:      '#ffc107',
+    seasonal: '#20c997',
+    sports:   '#dc3545',
+    awareness:'#6f42c1'
+};
+
+// ============ State ============
+let currentMonth = 0; // Start with January
+let userEvents = {
+    '2026-01-01': [{ title: "New Year's Day", type: 'holiday' }],
+    '2026-02-14': [{ title: "Valentine's Day", type: 'personal' }],
+    '2026-03-17': [{ title: "St. Patrick's Day", type: 'fun' }],
+    '2026-07-04': [{ title: 'Independence Day', type: 'holiday' }],
+    '2026-10-31': [{ title: 'Halloween', type: 'special' }],
+    '2026-11-26': [{ title: 'Thanksgiving', type: 'holiday' }],
+};
+
+// ============ Utilities ============
+function formatISO(year, month, day) {
+    return `${year}-${String(month + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+}
+
+function adjustColor(hex, pct) {
+    const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!r) return hex;
+    const adj = v => Math.min(255, Math.max(0, parseInt(v,16) + Math.round(2.55 * pct)));
+    return `#${[adj(r[1]),adj(r[2]),adj(r[3])].map(n=>n.toString(16).padStart(2,'0')).join('')}`;
+}
+
+// ============ Render ============
+function renderCalendar() {
+    const grid = document.getElementById('calendar-grid');
+    if (!grid) { console.error('calendar-grid element not found!'); return; }
+
+    grid.innerHTML = '';
+
+    const today = new Date();
+
+    // Navigation buttons
+    const navContainer = document.createElement('div');
+    navContainer.className = 'month-nav';
+    navContainer.innerHTML = `
+        <button id="btn-prev-month" aria-label="Previous month">&lt;</button>
+        <span class="current-month-text"></span>
+        <button id="btn-next-month" aria-label="Next month">&gt;</button>
+    `;
+    grid.appendChild(navContainer);
+
+    // Day-of-week header
+    const dowRow = document.createElement('div');
+    dowRow.className = 'day-header-row';
+    DAYS_OF_WEEK.forEach((d, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'dow-cell' + (i === 0 || i === 6 ? ' is-weekend' : '');
+        cell.textContent = d;
+        dowRow.appendChild(cell);
+    });
+    grid.appendChild(dowRow);
+
+    // Day grid
+    const dayGrid = document.createElement('div');
+    dayGrid.className = 'month-day-grid';
+
+    const firstDow = new Date(CURRENT_YEAR, currentMonth, 1).getDay();
+    const daysInMonth = new Date(CURRENT_YEAR, currentMonth + 1, 0).getDate();
+
+    // Empty leading cells (from prev month)
+    for (let i = 0; i < firstDow; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-day empty';
+        dayGrid.appendChild(empty);
+    }
+
+    // Day cells
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dow = new Date(CURRENT_YEAR, currentMonth, d).getDay();
+        const isWeekend = dow === 0 || dow === 6;
+        const isToday = today.getFullYear() === CURRENT_YEAR &&
+            today.getMonth() === currentMonth &&
+            today.getDate() === d;
+
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day' +
+            (isWeekend ? ' weekend' : '') +
+            (isToday   ? ' today'   : '');
+        cell.dataset.month = currentMonth;
+        cell.dataset.day = d;
+
+        // Date number
+        const dateNum = document.createElement('div');
+        dateNum.className = 'calendar-date';
+        dateNum.textContent = d;
+        cell.appendChild(dateNum);
+
+        // Events
+        renderEventsInCell(cell, d);
+
+        // Add hint
+        const hint = document.createElement('div');
+        hint.className = 'add-hint';
+        hint.textContent = '+ add';
+        cell.appendChild(hint);
+
+        // Click → open modal
+        cell.addEventListener('click', () => openModal(d));
+        dayGrid.appendChild(cell);
+    }
+
+    // Padding trailing cells (to next month)
+    const totalCells = firstDow + daysInMonth;
+    for (let i = 0; i < 7 - (totalCells % 7); i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-day empty';
+        dayGrid.appendChild(empty);
+    }
+
+    grid.appendChild(dayGrid);
+
+    // Setup navigation
+    setupNavigation();
+
+    // Animate day cells
+    animateDayCells();
+}
+
+function setupNavigation() {
+    const prevBtn = document.getElementById('btn-prev-month');
+    const nextBtn = document.getElementById('btn-next-month');
+    const currentText = document.querySelector('.current-month-text');
+
+    if (currentText) {
+        currentText.textContent = `${MONTHS[currentMonth]} ${CURRENT_YEAR}`;
+    }
+
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) currentMonth = 11;
+            renderCalendar();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) currentMonth = 0;
+            renderCalendar();
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement === prevBtn || e.key === 'ArrowLeft') {
+                currentMonth--;
+                if (currentMonth < 0) currentMonth = 11;
+                renderCalendar();
+            } else if (document.activeElement === nextBtn || e.key === 'ArrowRight') {
+                currentMonth++;
+                if (currentMonth > 11) currentMonth = 0;
+                renderCalendar();
+            }
+        });
+    }
+}
+
+function renderEventsInCell(cell, day) {
+    cell.querySelectorAll('.calendar-event').forEach(el => el.remove());
+
+    const key = formatISO(CURRENT_YEAR, currentMonth, day);
+    const evList = userEvents[key] || [];
+    const hint = cell.querySelector('.add-hint');
+
+    evList.slice(0, 2).forEach(ev => {
+        const pill = document.createElement('div');
+        pill.className = 'calendar-event';
+        const color = EVENT_COLORS[ev.type] || '#4a90d9';
+        pill.style.background = `linear-gradient(135deg, ${color}, ${adjustColor(color, -15)})`;
+        pill.textContent = ev.title;
+        cell.insertBefore(pill, hint);
+    });
+
+    if (evList.length > 2) {
+        const more = document.createElement('div');
+        more.className = 'calendar-event';
+        more.style.background = '#8896a5';
+        more.textContent = `+${evList.length - 2} more`;
+        cell.insertBefore(more, hint);
+    }
+}
+
+// ============ Modal ============
+let selectedDay = null;
+
+function openModal(day) {
+    selectedDay = day;
+
+    const overlay = document.getElementById('modal-overlay');
+    if (overlay) {
+        document.getElementById('modal-date-title').textContent =
+            `${MONTHS[currentMonth]} ${day}, ${CURRENT_YEAR}`;
+        document.getElementById('event-title-input').value = '';
+
+        refreshModalEventList();
+        overlay.classList.add('open');
+        setTimeout(() => document.getElementById('event-title-input').focus(), 200);
+    }
+}
+
+function closeModal() {
+    const overlay = document.getElementById('modal-overlay');
+    if (overlay) overlay.classList.remove('open');
+    selectedDay = null;
+}
+
+function saveEvent() {
+    const title = document.getElementById('event-title-input').value.trim();
+    if (!title) return;
+
+    const typeSelect = document.getElementById('event-type-select');
+    const typeMap = {
+        'holiday': 'holiday',
+        'personal': 'personal',
+        'work': 'work',
+        'special': 'special',
+        'fun': 'fun'
+    };
+    const type = typeMap[typeSelect.value];
+
+    const key = formatISO(CURRENT_YEAR, currentMonth, selectedDay);
+
+    if (!userEvents[key]) userEvents[key] = [];
+    userEvents[key].push({ title, type });
+
+    refreshModalEventList();
+    refreshCell();
+
+    // Clear input but keep it open for more events
+    document.getElementById('event-title-input').value = '';
+}
+
+function deleteEvent(index) {
+    const key = formatISO(CURRENT_YEAR, currentMonth, selectedDay);
+    if (userEvents[key]) {
+        userEvents[key].splice(index, 1);
+        if (userEvents[key].length === 0) delete userEvents[key];
+    }
+    refreshModalEventList();
+    refreshCell();
+}
+
+function refreshModalEventList() {
+    const container = document.getElementById('existing-events-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const key = formatISO(CURRENT_YEAR, currentMonth, selectedDay);
+    const evList = userEvents[key] || [];
+
+    if (evList.length === 0) return;
+
+    // Group by type
+    const grouped = {};
+    evList.forEach(ev => {
+        if (!grouped[ev.type]) grouped[ev.type] = [];
+        grouped[ev.type].push(ev);
+    });
+
+    Object.keys(grouped).forEach(type => {
+        const label = document.createElement('div');
+        label.style.cssText = 'font-size:0.7em;color:#8896a5;margin:6px 0;padding:4px;border-left:2px solid #ccc;';
+        label.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+        container.appendChild(label);
+
+        grouped[type].forEach((ev, i) => {
+            const row = document.createElement('div');
+            row.className = 'existing-event-row';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = ev.title;
+            row.appendChild(nameSpan);
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-event-btn';
+            delBtn.textContent = '×';
+            delBtn.title = 'Delete event';
+            delBtn.addEventListener('click', () => deleteEvent(i));
+            row.appendChild(delBtn);
+
+            container.appendChild(row);
+        });
+    });
+}
+
+function refreshCell() {
+    const cell = document.querySelector(`.calendar-day[data-month="${currentMonth}"][data-day="${selectedDay}"]`);
+    if (cell) renderEventsInCell(cell, selectedDay);
+}
+
+// ============ Animation ============
+function animateDayCells() {
+    setTimeout(() => {
+        document.querySelectorAll('.calendar-day:not(.empty)').forEach((cell, i) => {
+            cell.style.opacity = '0';
+            cell.style.transform = 'translateY(8px)';
+            setTimeout(() => {
+                cell.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                cell.style.opacity = '1';
+                cell.style.transform = 'translateY(0)';
+            }, i * 20);
+        });
+    }, 50);
+}
+
+// ============ Event Listeners ============
+const modalClose = document.getElementById('modal-close');
+const btnCancel = document.getElementById('btn-cancel-modal');
+const modalOverlay = document.getElementById('modal-overlay');
+const btnSave = document.getElementById('btn-save-event');
+const eventInput = document.getElementById('event-title-input');
+
+if (modalClose) modalClose.addEventListener('click', closeModal);
+if (btnCancel) btnCancel.addEventListener('click', closeModal);
+if (modalOverlay) {
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+    });
+}
+if (btnSave) btnSave.addEventListener('click', saveEvent);
+
+if (eventInput) {
+    eventInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') saveEvent();
+        if (e.key === 'Escape') closeModal();
+    });
+}
+
+// ============ Init ============
+console.log(`Calendar ${CURRENT_YEAR} initialized - Month: ${MONTHS[0]}`);
+renderCalendar();

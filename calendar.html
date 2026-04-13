@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- JetBrains Mono for technical aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="calendar-container">
+        <header class="calendar-header">
+            <h1>Calendar<span class="year-badge"></span></h1>
+            
+            <!-- Theme Toggle -->
+            <div class="theme-toggle">
+                <label class="theme-toggle-label">Theme</label>
+                <div class="theme-switch">
+                    <input type="checkbox" id="theme-checkbox">
+                    <label for="theme-checkbox" class="theme-slider">
+                        <span class="theme-icon icon-sun">☀️</span>
+                        <span class="theme-icon icon-moon">🌙</span>
+                    </label>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="calendar-nav">
+            <div class="nav-group">
+                <span class="nav-label">Year</span>
+                <div class="nav-controls">
+                    <button id="btn-prev-year" class="nav-btn nav-btn-year" aria-label="Previous year">&lt;&lt;</button>
+                    <button id="btn-next-year" class="nav-btn nav-btn-year" aria-label="Next year">&gt;&gt;</button>
+                </div>
+            </div>
+            
+            <span class="current-period"></span>
+
+            <div class="nav-group">
+                <span class="nav-label">Month</span>
+                <div class="nav-controls">
+                    <button id="btn-prev-month" class="nav-btn" aria-label="Previous month">&lt;</button>
+                    <button id="btn-next-month" class="nav-btn" aria-label="Next month">&gt;</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Calendar Grid -->
+        <section class="calendar-grid">
+            <!-- Day of Week Header -->
+            <div class="day-header-row">
+                <div class="dow-cell is-weekend">Sun</div>
+                <div class="dow-cell">Mon</div>
+                <div class="dow-cell">Tue</div>
+                <div class="dow-cell">Wed</div>
+                <div class="dow-cell">Thu</div>
+                <div class="dow-cell">Fri</div>
+                <div class="dow-cell is-weekend">Sat</div>
+            </div>
+
+            <!-- Day Grid -->
+            <div id="day-grid" class="month-day-grid"></div>
+        </section>
+    </div>
+
+    <!-- Event Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-date-title">Add Event</h3>
+                <button class="modal-close-btn" id="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="event-title-input" class="form-label">Event Name</label>
+                <input type="text" id="event-title-input" class="form-input" placeholder="Enter event name..." maxlength="50" aria-label="Enter event name" />
+            </div>
+            
+            <div class="form-group">
+                <label for="event-type-select" class="form-label">Event Type</label>
+                <select id="event-type-select" class="form-select" aria-label="Select event type">
+                    <option value="holiday">Holiday</option>
+                    <option value="personal" selected>Personal</option>
+                    <option value="work">Work</option>
+                    <option value="special">Special</option>
+                    <option value="fun">Fun</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-save-event" class="btn btn-primary">Add Event</button>
+                <button id="btn-cancel-modal" class="btn btn-secondary">Cancel</button>
+            </div>
+            
+            <div id="existing-events-container"></div>
+
+            <!-- Settings section -->
+            <div class="form-group" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--color-border);">
+                <label for="events-per-day" class="form-label">Events per day</label>
+                <select id="events-per-day" class="form-select" aria-label="Select number of events per day">
+                    <option value="1">1 event</option>
+                    <option value="2" selected>2 events</option>
+                    <option value="3">3 events</option>
+                    <option value="4">4 events</option>
+                    <option value="5">5 events</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Modal -->
+    <div class="modal-overlay" id="onboarding-modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Welcome</h3>
+                <button class="modal-close-btn" id="onboarding-dismiss" aria-label="Close">&times;</button>
+            </div>
+            <div style="color: var(--color-ink-muted); line-height: 1.7;">
+                <p style="margin-bottom: 12px;">Click on any day to add events like holidays, work meetings, or personal appointments.</p>
+                <p style="margin-bottom: 16px;">Use the navigation buttons above to switch between months and years.</p>
+            </div>
+            <div class="modal-actions">
+                <button id="onboarding-got-it" class="btn btn-primary">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPORTANT: script at end of body so DOM exists when JS runs -->
+    <script src="calendar.js"></script>
+</body>
+</html>
