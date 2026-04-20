@@ -13,7 +13,7 @@ A modern calendar application with a distinctive tech aesthetic and dual theme s
 ### 🌓 Dual Theme Support
 - **Light mode** - Bright, daytime-friendly interface with warm-tinted neutrals
 - **Dark mode** - Sleek evening view with proper contrast and reduced eye strain
-- **Theme toggle** - Smooth switching with localStorage persistence
+- **Dark mode toggle** - Clean switch with localStorage persistence
 - **Tinted neutrals** - Cohesive color system that adapts to theme
 
 ### 📅 Event Management
@@ -53,12 +53,12 @@ A modern calendar application with a distinctive tech aesthetic and dual theme s
 1. Open `calendar.html` in a web browser
 2. Click any day to add an event
 3. Choose event type and enter a name
-4. Use navigation buttons to switch months/years
-5. Toggle theme using the switch in the header
+4. Use navigation controls to switch months and years
+5. Toggle dark mode using the switch in the header
 
 ### Navigation
 - **Month controls** - Single arrows (⟨ ⟩) move one month
-- **Year controls** - Double arrows (≪ ≫) move one year
+- **Year selector** - Dropdown menu to jump to any year (±10 years from current)
 - **Current period** - Display shows active month and year
 
 ## Files
