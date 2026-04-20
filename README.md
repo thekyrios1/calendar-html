@@ -22,6 +22,11 @@ A modern calendar application with a distinctive tech aesthetic and dual theme s
 - **Event limits** - Configurable events per day (1-5)
 - **Overflow indicators** - See when days have more events than displayed
 
+### 🧭 Navigation
+- **Year dropdown** - Jump to any year instantly (±10 years from current)
+- **Month controls** - Single arrows to step through months
+- **Inline year display** - Year shown directly in the title, no badge
+
 ### 🎯 User Experience
 - **Click-to-add** - Click any day to add or manage events
 - **Today highlight** - Current date clearly marked with accent indicator
