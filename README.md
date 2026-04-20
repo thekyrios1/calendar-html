@@ -72,7 +72,6 @@ A modern calendar application with a distinctive tech aesthetic and dual theme s
 calendar.html   # Main HTML structure
 calendar.js     # Application logic and event management
 style.css       # Modern tech aesthetic styles
-README.md       # This file
 ```
 
 ## Browser Support
