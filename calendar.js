@@ -325,10 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Navigation buttons
-    const prevMonthBtn = document.getElementById('btn-prev-month');
+   const prevMonthBtn = document.getElementById('btn-prev-month');
     const nextMonthBtn = document.getElementById('btn-next-month');
-    const prevYearBtn = document.getElementById('btn-prev-year');
-    const nextYearBtn = document.getElementById('btn-next-year');
 
     if (prevMonthBtn) {
         prevMonthBtn.addEventListener('click', () => {
@@ -354,17 +352,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (prevYearBtn) {
-        prevYearBtn.addEventListener('click', () => {
-            CURRENT_YEAR--;
-            loadEvents();
-            renderCalendar();
-        });
-    }
-
-    if (nextYearBtn) {
-        nextYearBtn.addEventListener('click', () => {
-            CURRENT_YEAR++;
+    // Year select
+    const yearSelect = document.getElementById('year-select');
+    if (yearSelect) {
+        const startYear = CURRENT_YEAR - 10;
+        for (let y = startYear; y <= CURRENT_YEAR + 10; y++) {
+            const option = document.createElement('option');
+            option.value = y;
+            option.textContent = y;
+            if (y === CURRENT_YEAR) option.selected = true;
+            yearSelect.appendChild(option);
+        }
+        yearSelect.addEventListener('change', (e) => {
+            CURRENT_YEAR = parseInt(e.target.value);
             loadEvents();
             renderCalendar();
         });

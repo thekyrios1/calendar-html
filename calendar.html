@@ -17,13 +17,10 @@
             
             <!-- Theme Toggle -->
             <div class="theme-toggle">
-                <label class="theme-toggle-label">Theme</label>
+                <span class="theme-toggle-label">Dark mode</span>
                 <div class="theme-switch">
                     <input type="checkbox" id="theme-checkbox">
-                    <label for="theme-checkbox" class="theme-slider">
-                        <span class="theme-icon icon-sun">☀️</span>
-                        <span class="theme-icon icon-moon">🌙</span>
-                    </label>
+                    <label for="theme-checkbox" class="theme-slider"></label>
                 </div>
             </div>
         </header>
@@ -32,10 +29,7 @@
         <nav class="calendar-nav">
             <div class="nav-group">
                 <span class="nav-label">Year</span>
-                <div class="nav-controls">
-                    <button id="btn-prev-year" class="nav-btn nav-btn-year" aria-label="Previous year">&lt;&lt;</button>
-                    <button id="btn-next-year" class="nav-btn nav-btn-year" aria-label="Next year">&gt;&gt;</button>
-                </div>
+                <select id="year-select" class="form-select nav-year-select" aria-label="Select year"></select>
             </div>
             
             <span class="current-period"></span>
