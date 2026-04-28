@@ -4,36 +4,36 @@ A modern calendar application with a distinctive tech aesthetic and dual theme s
 
 ## Features
 
-### 🎨 Modern Tech Design
+### Modern Tech Design
 - **Electric teal accent** - Distinctive color palette that avoids generic AI aesthetics
 - **OKLCH colors** - Perceptually uniform palettes for both light and dark themes
 - **JetBrains Mono typography** - Technical monospace font paired with refined system fonts
 - **Clean geometric forms** - Subtle border radius, directional shadows, intentional spacing
 
-### 🌓 Dual Theme Support
+### Themes
 - **Light mode** - Bright, daytime-friendly interface with warm-tinted neutrals
 - **Dark mode** - Sleek evening view with proper contrast and reduced eye strain
 - **Dark mode toggle** - Clean switch with localStorage persistence
 - **Tinted neutrals** - Cohesive color system that adapts to theme
 
-### 📅 Event Management
+### Event Management
 - **Type-based categorization**: Holiday, Personal, Work, Special, Fun
 - **Color-coded events** - Each type has a distinct visual identity
 - **Event limits** - Configurable events per day (1-5)
 - **Overflow indicators** - See when days have more events than displayed
 
-### 🧭 Navigation
+### Navigation
 - **Year dropdown** - Jump to any year instantly (±10 years from current)
 - **Month controls** - Single arrows to step through months
 - **Inline year display** - Year shown directly in the title, no badge
 
-### 🎯 User Experience
+### User Experience
 - **Click-to-add** - Click any day to add or manage events
 - **Today highlight** - Current date clearly marked with accent indicator
 - **Weekend styling** - Visual distinction for Saturday/Sunday
 - **Responsive layout** - Adapts seamlessly from mobile to desktop
 
-### 💾 Data Persistence
+### Data Persistence
 - **localStorage** - Events and settings saved automatically
 - **Year-based storage** - Separate data per calendar year
 - **Theme memory** - Your theme preference is remembered
@@ -91,5 +91,3 @@ Requires support for:
 MIT License - Feel free to use, modify, and distribute.
 
 ---
-
-Built with attention to aesthetic detail and technical precision.
